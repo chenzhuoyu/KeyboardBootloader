@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Keyboard Bootloader",
+            "includePath": [
+                "${workspaceFolder}/",
+                "${workspaceFolder}/lufa/",
+                "/usr/local/Cellar/avr-gcc/8.2.0/avr/include/"
+            ],
+            "defines": [
+                "F_CPU=16000000UL",
+                "__AVR_ATmega16U2__",
+                "USE_LUFA_CONFIG_HEADER"
+            ],
+            "macFrameworkPath": [],
+            "compilerPath": "/usr/local/bin/avr-gcc -mmcu=atmega16u2",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "${default}"
+        }
+    ],
+    "version": 4
+}

@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "io.h": "c",
+        "delay.h": "c",
+        "lufaconfig.h": "c",
+        "usb_desc.h": "c",
+        "string.h": "c",
+        "pgmspace.h": "c",
+        "usb.h": "c"
+    }
+}
