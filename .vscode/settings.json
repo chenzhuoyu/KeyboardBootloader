@@ -6,6 +6,10 @@
         "usb_desc.h": "c",
         "string.h": "c",
         "pgmspace.h": "c",
-        "usb.h": "c"
+        "usb.h": "c",
+        "bulkvendor.h": "c",
+        "platform.h": "c",
+        "common.h": "c",
+        "device.h": "c"
     }
 }

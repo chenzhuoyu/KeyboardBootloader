@@ -1,5 +1,5 @@
 TARGET	= kbd_bootldr
-SRC		= main.c usb_desc.c $(LUFA_SRC_USB) $(LUFA_SRC_USBCLASS)
+SRC		= main.c usb_desc.c bootldr_apis.S $(LUFA_SRC_USB) $(LUFA_SRC_USBCLASS)
 
 MCU		= atmega16u2
 ARCH	= AVR8
@@ -16,7 +16,7 @@ LTO				= Y
 OPTIMIZATION	= s
 
 C_FLAGS			+= -fdata-sections -Wno-misleading-indentation -DUSE_LUFA_CONFIG_HEADER
-LD_FLAGS		+= -Wl,--section-start=".text=0x3000"
+LD_FLAGS		+= -Wl,--section-start=".text=0x3000" -Wl,--section-start=".bootldr_apis=0x3800"
 
 LUFA_PATH		= lufa/LUFA
 DMBS_PATH		= $(LUFA_PATH)/Build/DMBS/DMBS

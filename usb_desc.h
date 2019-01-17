@@ -6,8 +6,8 @@
 
 typedef struct _usb_desc_t
 {
-    USB_Descriptor_Configuration_Header_t header;
-    USB_Descriptor_Interface_t            dfu_intf;
+    USB_Descriptor_Configuration_Header_t   header;
+    USB_Descriptor_Interface_t              dfu_intf;
 } usb_desc_t;
 
 typedef enum _string_desc_t

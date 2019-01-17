@@ -43,19 +43,19 @@ static const usb_desc_t _usb_desc =
             .Type = DTYPE_Interface
         },
 
-        .InterfaceNumber        = 0,
-        .AlternateSetting       = 0x00,
-        .TotalEndpoints         = 0,
-        .Class                  = 0xfe,
-        .SubClass               = 0x01,
-        .Protocol               = 0x02,
-        .InterfaceStrIndex      = NO_DESCRIPTOR
+        .InterfaceNumber    = 0,
+        .AlternateSetting   = 0x00,
+        .TotalEndpoints     = 0,
+        .Class              = 0xff,
+        .SubClass           = 0x00,
+        .Protocol           = 0x00,
+        .InterfaceStrIndex  = NO_DESCRIPTOR
     }
 };
 
 static const USB_Descriptor_String_t _str_lang    = USB_STRING_DESCRIPTOR_ARRAY(LANGUAGE_ID_ENG);
 static const USB_Descriptor_String_t _str_vendor  = USB_STRING_DESCRIPTOR(L"Oxygen");
-static const USB_Descriptor_String_t _str_product = USB_STRING_DESCRIPTOR(L"Oxygen's Keyboard DFU");
+static const USB_Descriptor_String_t _str_product = USB_STRING_DESCRIPTOR(L"Oxygen's Keyboard DFU Mode");
 
 uint16_t CALLBACK_USB_GetDescriptor(const uint16_t value, const uint16_t index, const void **desc)
 {
