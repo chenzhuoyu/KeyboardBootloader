@@ -43,13 +43,37 @@ static const usb_desc_t _usb_desc =
             .Type = DTYPE_Interface
         },
 
-        .InterfaceNumber    = 0,
-        .AlternateSetting   = 0x00,
-        .TotalEndpoints     = 0,
-        .Class              = 0xff,
-        .SubClass           = 0x00,
-        .Protocol           = 0x00,
-        .InterfaceStrIndex  = NO_DESCRIPTOR
+        .InterfaceNumber        = 0,
+        .AlternateSetting       = 0x00,
+        .TotalEndpoints         = 2,
+        .Class                  = 0xff,
+        .SubClass               = 0x00,
+        .Protocol               = 0x00,
+        .InterfaceStrIndex      = NO_DESCRIPTOR
+    },
+
+    .dfu_read_ep = {
+        .Header = {
+            .Size = sizeof(USB_Descriptor_Endpoint_t),
+            .Type = DTYPE_Endpoint
+        },
+
+        .EndpointAddress        = DFU_READ_EP,
+        .Attributes             = EP_TYPE_BULK | ENDPOINT_USAGE_DATA,
+        .EndpointSize           = DFU_READ_SIZE,
+        .PollingIntervalMS      = 0x05
+    },
+
+    .dfu_write_ep = {
+        .Header = {
+            .Size = sizeof(USB_Descriptor_Endpoint_t),
+            .Type = DTYPE_Endpoint
+        },
+
+        .EndpointAddress        = DFU_WRITE_EP,
+        .Attributes             = EP_TYPE_BULK | ENDPOINT_USAGE_DATA,
+        .EndpointSize           = DFU_WRITE_SIZE,
+        .PollingIntervalMS      = 0x05
     }
 };
 
