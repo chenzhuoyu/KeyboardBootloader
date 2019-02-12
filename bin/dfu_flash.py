@@ -73,9 +73,9 @@ def load_hex(name, page):
                     start = addr
 
                 if offset is not None:
-                    program += bytearray('\x00') * (addr - offset - 16)
+                    program += bytearray('\x00') * (addr - offset)
 
-                offset = addr
+                offset = addr + size
                 program += data
 
     if len(program) % page == 0:
@@ -177,7 +177,7 @@ def main():
         print '- ERROR: cannot verify address with %s, error code: %02x.' % (mode, ret)
         exit(1)
     if raddr != start:
-        print '- ERROR: cannot verify address with %s, mode mismatch: %04x.' % (mode, start)
+        print '- ERROR: cannot verify address with %s, address mismatch: %04x.' % (mode, start)
         exit(1)
 
     i = 0
