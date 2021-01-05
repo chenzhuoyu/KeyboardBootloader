@@ -1,10 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import usb
 import sys
 import time
 import struct
+import binascii
 
 MEM_FLASH           = 0xb0
 MEM_EEPROM          = 0xb1
@@ -33,7 +34,7 @@ ERR_PAGE            = 0x85
 ERR_OVERFLOW        = 0x86
 
 def load_hex(name, page):
-    with open(name, 'rU') as fp:
+    with open(name, 'r', newline = None) as fp:
         end = False
         start = None
         offset = None
@@ -44,28 +45,28 @@ def load_hex(name, page):
                 continue
 
             if end:
-                print '- ERROR: content after EOF.'
+                print('- ERROR: content after EOF.')
                 exit(1)
 
             if line[0] != ':':
-                print '- ERROR: only support Intel Hex files.'
+                print('- ERROR: only support Intel Hex files.')
                 exit(1)
 
             size = int(line[1:3], 16)
             addr = int(line[3:7], 16)
             rcat = int(line[7:9], 16)
-            data = bytearray(line[9:9 + size * 2].decode('hex'))
+            data = bytearray(binascii.unhexlify(line[9:9 + size * 2]))
             last = int(line[9 + size * 2:11 + size * 2], 16)
 
-            if last != (-sum(bytearray(line[1:9 + size * 2].decode('hex')), 0) & 0xff):
-                print '- ERROR: checksum error on line %d.' % i
+            if last != (-sum(bytearray(binascii.unhexlify(line[1:9 + size * 2])), 0) & 0xff):
+                print('- ERROR: checksum error on line %d.' % i)
                 exit(1)
 
             if rcat == 0x01:
                 if not size:
                     end = True
                 else:
-                    print '- ERROR: EOF is not empty.'
+                    print('- ERROR: EOF is not empty.')
                     exit(1)
 
             elif rcat == 0x00:
@@ -73,7 +74,7 @@ def load_hex(name, page):
                     start = addr
 
                 if offset is not None:
-                    program += bytearray('\x00') * (addr - offset)
+                    program += bytearray(addr - offset)
 
                 offset = addr + size
                 program += data
@@ -82,10 +83,10 @@ def load_hex(name, page):
         return start, program
     else:
         npad = page - len(program) % page
-        return start, program + bytearray('\x00' * npad)
+        return start, program + bytearray(npad)
 
 def find_dev(vid, pid):
-    for _ in xrange(10):
+    for _ in range(10):
         dev = usb.core.find(
             idVendor = vid,
             idProduct = pid
@@ -128,7 +129,7 @@ def write_page(dev, data, page_size):
 
 def main():
     if len(sys.argv) != 3:
-        print 'usage: %s [flash|eeprom] <file-name>' % sys.argv[0]
+        print('usage: %s [flash|eeprom] <file-name>' % sys.argv[0])
         exit(1)
 
     if sys.argv[1] == 'flash':
@@ -140,44 +141,44 @@ def main():
         mode = 'EEPROM'
         page = MEM_EEPROM_PAGE
     else:
-        print 'usage: %s [flash|eeprom] <file-name>' % sys.argv[0]
+        print('usage: %s [flash|eeprom] <file-name>' % sys.argv[0])
         exit(1)
 
-    print '* Loading %s image %r with page size %d ...' % (mode, sys.argv[2], page)
+    print('* Loading %s image %r with page size %d ...' % (mode, sys.argv[2], page))
     start, program = load_hex(sys.argv[2], page)
 
-    print '* Waiting for keyboard to enter DFU mode ...'
+    print('* Waiting for keyboard to enter DFU mode ...')
     dev = find_dev(0x01a1, 0x07c8)
     if dev is None:
-        print '- ERROR: keyboard not found or not in DFU mode.'
+        print('- ERROR: keyboard not found or not in DFU mode.')
         exit(1)
 
-    print '* Setting address mode to %s ...' % mode
+    print('* Setting address mode to %s ...' % mode)
     ret = set_mode(dev, mem)
     if ret != ERR_OK:
-        print '- ERROR: cannot set address mode to %s, error code: %02x.' % (mode, ret)
+        print('- ERROR: cannot set address mode to %s, error code: %02x.' % (mode, ret))
         exit(1)
 
     ret, rmem = get_mode(dev)
     if ret != ERR_OK:
-        print '- ERROR: cannot verify address mode with %s, error code: %02x.' % (mode, ret)
+        print('- ERROR: cannot verify address mode with %s, error code: %02x.' % (mode, ret))
         exit(1)
     if rmem != mem:
-        print '- ERROR: cannot verify address mode with %s, mode mismatch: %02x.' % (mode, rmem)
+        print('- ERROR: cannot verify address mode with %s, mode mismatch: %02x.' % (mode, rmem))
         exit(1)
 
-    print '* Programming ...'
+    print('* Programming ...')
     ret = set_addr(dev, start)
     if ret != ERR_OK:
-        print '- ERROR: cannot set address to %s, error code: %02x.' % (mode, ret)
+        print('- ERROR: cannot set address to %s, error code: %02x.' % (mode, ret))
         exit(1)
 
     ret, raddr = get_addr(dev)
     if ret != ERR_OK:
-        print '- ERROR: cannot verify address with %s, error code: %02x.' % (mode, ret)
+        print('- ERROR: cannot verify address with %s, error code: %02x.' % (mode, ret))
         exit(1)
     if raddr != start:
-        print '- ERROR: cannot verify address with %s, address mismatch: %04x.' % (mode, start)
+        print('- ERROR: cannot verify address with %s, address mismatch: %04x.' % (mode, start))
         exit(1)
 
     i = 0
@@ -189,10 +190,10 @@ def main():
 
         ret, raddr = write_page(dev, data[:page], page)
         if ret != ERR_OK:
-            print '\n- ERROR: cannot write to %s page %d, error code: %02x.' % (mode, i, ret)
+            print('\n- ERROR: cannot write to %s page %d, error code: %02x.' % (mode, i, ret))
             exit(1)
         if raddr != addr:
-            print '\n- ERROR: wrong address of %s page %d: %02x.' % (mode, i, raddr)
+            print('\n- ERROR: wrong address of %s page %d: %02x.' % (mode, i, raddr))
             exit(1)
 
         i += 1
@@ -200,18 +201,18 @@ def main():
         data = data[page:]
 
     print
-    print '* Verifying ...'
+    print('* Verifying ...')
     ret = set_addr(dev, start)
     if ret != ERR_OK:
-        print '- ERROR: cannot set address to %s, error code: %02x.' % (mode, ret)
+        print('- ERROR: cannot set address to %s, error code: %02x.' % (mode, ret))
         exit(1)
 
     ret, raddr = get_addr(dev)
     if ret != ERR_OK:
-        print '- ERROR: cannot verify address with %s, error code: %02x.' % (mode, ret)
+        print('- ERROR: cannot verify address with %s, error code: %02x.' % (mode, ret))
         exit(1)
     if raddr != start:
-        print '- ERROR: cannot verify address with %s, mode mismatch: %04x.' % (mode, start)
+        print('- ERROR: cannot verify address with %s, mode mismatch: %04x.' % (mode, start))
         exit(1)
 
     i = 0
@@ -223,10 +224,10 @@ def main():
 
         ret, rpage = read_page(dev)
         if ret != ERR_OK:
-            print '\n- ERROR: cannot verify address with %s, error code: %02x.' % (mode, ret)
+            print('\n- ERROR: cannot verify address with %s, error code: %02x.' % (mode, ret))
             exit(1)
         if rpage != data[:page]:
-            print '\n- ERROR: page %d does not match.' % i
+            print('\n- ERROR: page %d does not match.' % i)
             exit(1)
 
         i += 1
@@ -234,13 +235,13 @@ def main():
         data = data[page:]
 
     print
-    print '* Resetting ...'
+    print('* Resetting ...')
     ret = reset(dev)
     if ret != ERR_OK:
-        print '- ERROR: cannot reset device, error code: %02x.' % ret
+        print('- ERROR: cannot reset device, error code: %02x.' % ret)
         exit(1)
 
-    print '* Done'
+    print('* Done')
     dev = None
 
 if __name__ == '__main__':

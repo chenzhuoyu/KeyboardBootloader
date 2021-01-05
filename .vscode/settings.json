@@ -10,6 +10,9 @@
         "bulkvendor.h": "c",
         "platform.h": "c",
         "common.h": "c",
-        "device.h": "c"
-    }
+        "device.h": "c",
+        "*.ttml": "xml",
+        "*.ttss": "css"
+    },
+    "python.pythonPath": "/usr/local/bin/python3"
 }
